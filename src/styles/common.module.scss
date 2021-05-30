@@ -24,7 +24,8 @@
     margin-right: 0.5rem;
   }
 
-  time {
+  time,
+  span:not(:last-child) {
     margin-right: 1.5rem;
   }
 }

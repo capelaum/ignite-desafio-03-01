@@ -1,13 +1,15 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
 import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
-import { getPrismicClient } from '../../services/prismic';
-import ptBR from 'date-fns/locale/pt-BR';
 import Prismic from '@prismicio/client';
+
+import ptBR from 'date-fns/locale/pt-BR';
 import { format } from 'date-fns';
+
+import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
-import Head from 'next/head';
 
 interface Post {
   first_publication_date: string | null;
@@ -29,10 +31,11 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  timeToRead: number;
 }
 
 // TODO
-export default function Post({ post }: PostProps) {
+export default function Post({ post, timeToRead }: PostProps) {
   return (
     <>
       <Head>
@@ -59,6 +62,10 @@ export default function Post({ post }: PostProps) {
               <FiUser />
               {post?.data.author}
             </span>
+            <span>
+              <FiClock />
+              {timeToRead} min
+            </span>
           </div>
 
           {post?.data.content.map(content => (
@@ -80,8 +87,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await prismic.query([
     Prismic.predicates.at('document.type', 'posts'),
   ]);
-
-  console.log('getStaticPaths posts:', posts.results);
 
   // TODO
   return {
@@ -126,9 +131,23 @@ export const getStaticProps: GetStaticProps = async context => {
     },
   };
 
+  const totalWords = post.data.content.reduce((acc, current) => {
+
+    const headingCount = (current.heading).split(" ").length;
+    const textArray = current.body.map(body => body.text)
+    const bodyCount = textArray.join(' ').split(" ").length;
+
+    return acc + (headingCount + bodyCount)
+  }, 0)
+
+
+  const timeToRead = Math.ceil(totalWords / 200)
+  // console.log("🚀 ~ timeToRead", timeToRead)
+
   return {
     props: {
       post,
+      timeToRead,
     },
   };
 };
