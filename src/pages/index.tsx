@@ -1,9 +1,8 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import Prismic from '@prismicio/client';
-import { RichText } from 'prismic-dom';
 import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
-
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
@@ -11,7 +10,6 @@ import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
-import Link from 'next/link';
 
 interface Post {
   uid?: string;
@@ -43,11 +41,11 @@ export default function Home({ posts }: PostPagination) {
       <main className={commonStyles.container}>
         <div className={styles.posts}>
           {posts.map(post => (
-            <Link href={`/posts/${post.uid}`}>
-              <a key={post.uid}>
+            <Link href={`/post/${post.uid}`} key={post.uid}>
+              <a>
                 <strong>{post.data.title}</strong>
                 <p>{post.data.subtitle}</p>
-                <div className={styles.infoContainer}>
+                <div className={commonStyles.infoContainer}>
                   <time>
                     <FiCalendar />
                     {post.first_publication_date}
@@ -66,7 +64,6 @@ export default function Home({ posts }: PostPagination) {
   );
 }
 
-// TODO
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
@@ -76,9 +73,6 @@ export const getStaticProps: GetStaticProps = async () => {
       pageSize: 2,
     }
   );
-
-  // console.log(JSON.stringify(postsResponse, null, 2));
-  // console.log(postsResponse);
 
   const posts = postsResponse.results.map(post => {
     return {
@@ -100,5 +94,6 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       posts,
     },
+    revalidate: 60 * 60, // 1 hora
   };
 };

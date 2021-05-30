@@ -1,4 +1,3 @@
-// TODO
 .postsContainer {
   max-width: 1120px;
   margin: 0 auto;
@@ -25,13 +24,6 @@
       color: var(--pink);
     }
 
-    time, span {
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      color: var(--gray-500);
-    }
-
     strong {
       display: block;
       font-size: 1.5rem;
@@ -45,24 +37,6 @@
       color: var(--gray-300);
       margin-top: 0.5rem;
       line-height: 1.625rem;
-    }
-
-    .infoContainer {
-      display: flex;
-      margin-top: 1.5rem;
-
-      svg {
-        width: 20px;
-        height: 20px;
-      }
-
-      svg:first-child {
-        margin-right: 0.5rem;
-      }
-
-      time {
-        margin-right: 1.5rem;
-      }
     }
   }
 }
