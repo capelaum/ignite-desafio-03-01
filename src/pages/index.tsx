@@ -2,6 +2,7 @@ import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import Prismic from '@prismicio/client';
+import { useRouter } from 'next/router'
 import { FiUser, FiCalendar } from 'react-icons/fi';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
@@ -30,8 +31,13 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-// TODO
 export default function Home({ posts }: PostPagination) {
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <h2>Carregando...</h2>
+  }
+
   return (
     <>
       <Head>
