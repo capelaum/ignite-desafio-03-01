@@ -6,6 +6,7 @@
 
 // TODO
 :root {
+  --pink-100: #dbaec6;
   --pink: #FF57B2;
 
   --gray-100: #F8F8F8;
@@ -33,7 +34,7 @@ body {
 }
 
 body, input, textarea, select, button {
-  font: 400 1rem "Roboto", sans-serif;
+  font: 400 1rem "Inter", sans-serif;
 }
 
 button {
