@@ -2,7 +2,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
 import { getPrismicClient } from '../../services/prismic';
 import ptBR from 'date-fns/locale/pt-BR';
-import { RichText } from 'prismic-dom';
+import Prismic from '@prismicio/client';
 import { format } from 'date-fns';
 
 import commonStyles from '../../styles/common.module.scss';
@@ -62,7 +62,7 @@ export default function Post({ post }: PostProps) {
           </div>
 
           {post?.data.content.map(content => (
-            <div key={content.heading} className={styles.content}>
+            <div key={content.heading} className={styles.postContent}>
               <h2>{content.heading}</h2>
               {content.body.map((body, index) => (
                 <p key={index}>{body.text}</p>
@@ -77,11 +77,20 @@ export default function Post({ post }: PostProps) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
-  // const posts = await prismic.query();
+  const posts = await prismic.query([
+    Prismic.predicates.at('document.type', 'posts'),
+  ]);
+
+  console.log('getStaticPaths posts:', posts.results);
 
   // TODO
   return {
-    paths: [],
+    paths: posts.results.map((post, index) => {
+      if (index < 2)
+        return {
+          params: { slug: post.uid },
+        };
+    }),
     fallback: true,
   };
 };
