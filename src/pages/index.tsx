@@ -10,6 +10,7 @@ import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
+import { useEffect, useState } from 'react';
 
 interface Post {
   uid?: string;
@@ -23,14 +24,42 @@ interface Post {
 
 interface PostPagination {
   next_page: string;
-  posts: Post[];
+  results: Post[];
 }
 
 interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home({ posts }: PostPagination) {
+export default function Home({ postsPagination }: HomeProps) {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [nextPage, setNextPage] = useState('');
+
+  useEffect(() => {
+    setPosts(postsPagination.results);
+    setNextPage(postsPagination.next_page);
+  }, [postsPagination.results, postsPagination.next_page]);
+
+  function handlePagination(): void {
+    fetch(nextPage)
+      .then(res => res.json())
+      .then(data => {
+        const formattedData = data.results.map(post => {
+          return {
+            uid: post.uid,
+            first_publication_date: post.first_publication_date,
+            data: {
+              title: post.data.title,
+              subtitle: post.data.subtitle,
+              author: post.data.author,
+            },
+          };
+        });
+
+        setPosts([...posts, ...formattedData]);
+        setNextPage(data.next_page);
+      });
+  }
 
   return (
     <>
@@ -48,7 +77,11 @@ export default function Home({ posts }: PostPagination) {
                 <div className={commonStyles.infoContainer}>
                   <time>
                     <FiCalendar />
-                    {post.first_publication_date}
+                    {format(
+                      new Date(post.first_publication_date),
+                      'dd MMM yyyy',
+                      { locale: ptBR }
+                    )}
                   </time>
                   <span>
                     <FiUser />
@@ -58,6 +91,12 @@ export default function Home({ posts }: PostPagination) {
               </a>
             </Link>
           ))}
+          
+          {nextPage && (
+            <button onClick={handlePagination}>
+              Carregar mais posts
+            </button>
+          )}
         </div>
       </main>
     </>
@@ -74,25 +113,27 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   );
 
+  // console.log(postsResponse);
+  // console.log(postsResponse.results);
+
   const posts = postsResponse.results.map(post => {
     return {
       uid: post.uid,
+      first_publication_date: post.first_publication_date,
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
         author: post.data.author,
       },
-      first_publication_date: format(
-        new Date(post.first_publication_date),
-        'dd MMM yyyy',
-        { locale: ptBR }
-      ),
     };
   });
 
   return {
     props: {
-      posts,
+      postsPagination: {
+        next_page: postsResponse.next_page,
+        results: posts,
+      },
     },
     revalidate: 60 * 60, // 1 hora
   };
