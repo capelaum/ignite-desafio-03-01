@@ -13,8 +13,10 @@ import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
+import Link from 'next/link';
 
 interface Post {
+  uid: string;
   first_publication_date: string | null;
   last_publication_date: string | null;
   data: {
@@ -35,9 +37,11 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  nextPage: Post;
+  prevPage: Post;
 }
 
-export default function Post({ post }: PostProps) {
+export default function Post({ post, nextPage, prevPage }: PostProps) {
   const router = useRouter();
 
   if (router.isFallback) return <h2>Carregando...</h2>;
@@ -115,6 +119,27 @@ export default function Post({ post }: PostProps) {
             </section>
           ))}
         </article>
+
+        <div className={styles.paginator}>
+          {prevPage && (
+            <div className={styles.paginatorContent}>
+              <h2>{prevPage.data.title}</h2>
+              <Link href={prevPage.uid}>
+                <a>Post Anterior</a>
+              </Link>
+            </div>
+          )}
+
+          {nextPage && (
+            <div className={styles.paginatorContent}>
+              <h2>{nextPage.data.title}</h2>
+              <Link href={nextPage.uid}>
+                <a>Próximo Post</a>
+              </Link>
+            </div>
+          )}
+        </div>
+
       </main>
     </>
   );
@@ -174,9 +199,33 @@ export const getStaticProps: GetStaticProps = async context => {
     },
   };
 
+  const nextPage = await prismic.query(
+    [Prismic.Predicates.at('document.type', 'posts')],
+    {
+      pageSize: 1,
+      after: `${response.id}`,
+      orderings: '[document.first_publication_date desc]',
+    }
+  );
+
+  const prevPage = await prismic.query(
+    [Prismic.Predicates.at('document.type', 'posts')],
+    {
+      pageSize: 1,
+      after: `${response.id}`,
+      orderings: '[document.first_publication_date]',
+    }
+  );
+
+  console.log("nextPage:", nextPage);
+  console.log("prevPage:", prevPage);
+
+
   return {
     props: {
       post,
+      nextPage: nextPage.results[0] || null,
+      prevPage: prevPage.results[0] || null,
     },
     revalidate: 60 * 60, // 1 hora
   };
