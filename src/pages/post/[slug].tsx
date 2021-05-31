@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router'
 import Head from 'next/head';
 import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
 import Prismic from '@prismicio/client';
@@ -31,11 +32,28 @@ interface Post {
 
 interface PostProps {
   post: Post;
-  timeToRead: number;
 }
 
-// TODO
-export default function Post({ post, timeToRead }: PostProps) {
+export default function Post({ post }: PostProps) {
+
+  const router = useRouter();
+
+  if (router?.isFallback) {
+    return <h2>Carregando...</h2>
+  }
+
+  const totalWords = post.data.content.reduce((total, content) => {
+
+    const headingCount = (content.heading).split(" ").length;
+    const textArray = content.body.map(body => body.text)
+    const bodyCount = textArray.join(' ').split(" ").length;
+
+    return total + (headingCount + bodyCount)
+  }, 0)
+
+  const timeToRead = Math.ceil(totalWords / 200)
+  // console.log("🚀 ~ timeToRead", timeToRead)
+
   return (
     <>
       <Head>
@@ -88,7 +106,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
     Prismic.predicates.at('document.type', 'posts'),
   ]);
 
-  // TODO
   return {
     paths: posts.results.map((post, index) => {
       if (index < 2)
@@ -107,7 +124,7 @@ export const getStaticProps: GetStaticProps = async context => {
 
   const post = {
     first_publication_date: format(
-      new Date(response.last_publication_date),
+      new Date(response.first_publication_date),
       'dd MMM yyyy',
       { locale: ptBR }
     ),
@@ -131,23 +148,9 @@ export const getStaticProps: GetStaticProps = async context => {
     },
   };
 
-  const totalWords = post.data.content.reduce((acc, current) => {
-
-    const headingCount = (current.heading).split(" ").length;
-    const textArray = current.body.map(body => body.text)
-    const bodyCount = textArray.join(' ').split(" ").length;
-
-    return acc + (headingCount + bodyCount)
-  }, 0)
-
-
-  const timeToRead = Math.ceil(totalWords / 200)
-  // console.log("🚀 ~ timeToRead", timeToRead)
-
   return {
     props: {
       post,
-      timeToRead,
     },
   };
 };
