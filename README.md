@@ -1,8 +1,9 @@
 ## Space Travelling Blog
 
 Implementação de um Blog utilizando Prismic CMS e Next.js
-
-<img src=".github/Capa.png" align="center">
+<div align="center">
+  <img src=".github/Capa.png">
+</div>
 
 ### Instalação
 
