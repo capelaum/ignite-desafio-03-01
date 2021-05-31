@@ -121,6 +121,9 @@ export default function Post({ post, nextPage, prevPage, preview }: PostProps) {
           ))}
         </article>
 
+      </main>
+
+      <footer className={commonStyles.container}>
         <div className={styles.paginator}>
           {prevPage && (
             <div className={styles.paginatorContent}>
@@ -148,7 +151,7 @@ export default function Post({ post, nextPage, prevPage, preview }: PostProps) {
             </Link>
           </aside>
         )}
-      </main>
+      </footer>
     </>
   );
 }

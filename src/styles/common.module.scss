@@ -8,7 +8,8 @@
   display: flex;
   margin-top: 1.5rem;
 
-  time, span {
+  time,
+  span {
     font-size: 1rem;
     display: flex;
     align-items: center;
@@ -35,7 +36,6 @@
 }
 
 .previewPrismic {
-
   a {
     background-color: var(--gray-100);
     color: black;
