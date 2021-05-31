@@ -1,8 +1,10 @@
+import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { FiUser, FiCalendar, FiClock } from 'react-icons/fi';
+
 import Prismic from '@prismicio/client';
+import { RichText } from 'prismic-dom';
 
 import ptBR from 'date-fns/locale/pt-BR';
 import { format } from 'date-fns';
@@ -11,7 +13,6 @@ import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
-import { RichText } from 'prismic-dom';
 
 interface Post {
   first_publication_date: string | null;
@@ -38,9 +39,7 @@ interface PostProps {
 export default function Post({ post }: PostProps) {
   const router = useRouter();
 
-  if (router?.isFallback) {
-    return <h2>Carregando...</h2>;
-  }
+  if (router.isFallback) return <h2>Carregando...</h2>;
 
   const totalWords = post.data.content.reduce((total, content) => {
     const headingCount = content.heading.split(' ').length;
@@ -51,7 +50,6 @@ export default function Post({ post }: PostProps) {
   }, 0);
 
   const timeToRead = Math.ceil(totalWords / 200);
-  // console.log("🚀 ~ timeToRead", timeToRead)
 
   return (
     <>
@@ -107,13 +105,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
     Prismic.predicates.at('document.type', 'posts'),
   ]);
 
+  const paths = posts.results.map(result => {
+    return {
+      params: {
+        slug: result.uid,
+      },
+    };
+  });
+
   return {
-    paths: posts.results.map((post, index) => {
-      if (index < 2)
-        return {
-          params: { slug: post.uid },
-        };
-    }),
+    paths,
     fallback: true,
   };
 };
@@ -122,10 +123,6 @@ export const getStaticProps: GetStaticProps = async context => {
   const prismic = getPrismicClient();
   const { slug } = context.params;
   const response = await prismic.getByUID('posts', String(slug), {});
-
-  console.log(JSON.stringify(response.data, null, 2));
-
-  // response.data.content.map(content => RichText.asText(content))
 
   const post = {
     uid: response.uid,
@@ -156,5 +153,6 @@ export const getStaticProps: GetStaticProps = async context => {
     props: {
       post,
     },
+    revalidate: 60 * 60, // 1 hora
   };
 };

@@ -96,9 +96,7 @@ export default function Home({ postsPagination }: HomeProps) {
           ))}
 
           {nextPage && (
-            <button onClick={handlePagination}>
-              Carregar mais posts
-            </button>
+            <button onClick={handlePagination}>Carregar mais posts</button>
           )}
         </div>
       </main>
