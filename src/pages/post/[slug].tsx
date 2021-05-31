@@ -39,9 +39,10 @@ interface PostProps {
   post: Post;
   nextPage: Post;
   prevPage: Post;
+  preview: boolean;
 }
 
-export default function Post({ post, nextPage, prevPage }: PostProps) {
+export default function Post({ post, nextPage, prevPage, preview }: PostProps) {
   const router = useRouter();
 
   if (router.isFallback) return <h2>Carregando...</h2>;
@@ -140,6 +141,13 @@ export default function Post({ post, nextPage, prevPage }: PostProps) {
           )}
         </div>
 
+        {preview && (
+          <aside className={commonStyles.previewPrismic}>
+            <Link href="/api/exit-preview">
+              <a>Sair do modo Preview</a>
+            </Link>
+          </aside>
+        )}
       </main>
     </>
   );
@@ -165,10 +173,17 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async context => {
+export const getStaticProps: GetStaticProps = async ({
+  params,
+  preview = false,
+  previewData,
+}) => {
+  const { slug } = params;
+
   const prismic = getPrismicClient();
-  const { slug } = context.params;
-  const response = await prismic.getByUID('posts', String(slug), {});
+  const response = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref ?? null,
+  });
 
   if (!response?.data) {
     return {
@@ -217,15 +232,15 @@ export const getStaticProps: GetStaticProps = async context => {
     }
   );
 
-  console.log("nextPage:", nextPage);
-  console.log("prevPage:", prevPage);
-
+  console.log('nextPage:', nextPage);
+  console.log('prevPage:', prevPage);
 
   return {
     props: {
       post,
       nextPage: nextPage.results[0] || null,
       prevPage: prevPage.results[0] || null,
+      preview,
     },
     revalidate: 60 * 60, // 1 hora
   };
