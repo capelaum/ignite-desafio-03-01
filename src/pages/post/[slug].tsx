@@ -16,6 +16,7 @@ import styles from './post.module.scss';
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     banner: {
@@ -50,8 +51,8 @@ export default function Post({ post }: PostProps) {
       return total + (headingCount + bodyCount);
     }, 0);
 
-    return (Math.ceil(totalWords / 200)).toString();
-  }
+    return Math.ceil(totalWords / 200).toString();
+  };
 
   return (
     <>
@@ -86,6 +87,21 @@ export default function Post({ post }: PostProps) {
               {calculateTimeToRead()} min
             </span>
           </div>
+
+          {post.first_publication_date !== post.last_publication_date && (
+            <div className={commonStyles.infoContainer}>
+              <span className={commonStyles.editInfo}>
+                * editado em{' '}
+                {format(
+                  new Date(post.last_publication_date),
+                  "dd MMM yyyy', às ' HH:mm",
+                  {
+                    locale: ptBR,
+                  }
+                )}
+              </span>
+            </div>
+          )}
 
           {post.data.content.map(section => (
             <section key={section.heading} className={styles.postContent}>
@@ -129,9 +145,19 @@ export const getStaticProps: GetStaticProps = async context => {
   const { slug } = context.params;
   const response = await prismic.getByUID('posts', String(slug), {});
 
+  if (!response?.data) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
+    last_publication_date: response.last_publication_date,
     data: {
       title: response.data.title,
       subtitle: response.data.subtitle,
