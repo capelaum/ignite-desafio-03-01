@@ -41,20 +41,22 @@ export default function Post({ post }: PostProps) {
 
   if (router.isFallback) return <h2>Carregando...</h2>;
 
-  const totalWords = post.data.content.reduce((total, content) => {
-    const headingCount = content.heading.split(' ').length;
-    const textArray = content.body.map(body => body.text);
-    const bodyCount = textArray.join(' ').split(' ').length;
+  const calculateTimeToRead = () => {
+    const totalWords = post.data.content.reduce((total, content) => {
+      const headingCount = content.heading.split(' ').length;
+      const textArray = content.body.map(body => body.text);
+      const bodyCount = textArray.join(' ').split(' ').length;
 
-    return total + (headingCount + bodyCount);
-  }, 0);
+      return total + (headingCount + bodyCount);
+    }, 0);
 
-  const timeToRead = Math.ceil(totalWords / 200);
+    return (Math.ceil(totalWords / 200)).toString();
+  }
 
   return (
     <>
       <Head>
-        <title>{post?.data.title} | SpaceTraveling</title>
+        <title>{post.data.title} | SpaceTraveling</title>
       </Head>
 
       <div className={styles.bannerContainer}>
@@ -67,7 +69,7 @@ export default function Post({ post }: PostProps) {
 
       <main className={commonStyles.container}>
         <article className={styles.post}>
-          <h1>{post?.data.title}</h1>
+          <h1>{post.data.title}</h1>
           <div className={commonStyles.infoContainer}>
             <time>
               <FiCalendar />
@@ -81,17 +83,20 @@ export default function Post({ post }: PostProps) {
             </span>
             <span>
               <FiClock />
-              {timeToRead} min
+              {calculateTimeToRead()} min
             </span>
           </div>
 
-          {post.data.content.map(content => (
-            <div key={content.heading} className={styles.postContent}>
-              <h2>{content.heading}</h2>
-              {content.body.map((body, index) => (
-                <p key={index}>{body.text}</p>
-              ))}
-            </div>
+          {post.data.content.map(section => (
+            <section key={section.heading} className={styles.postContent}>
+              <h2>{section.heading}</h2>
+              <div
+                className={styles.content}
+                dangerouslySetInnerHTML={{
+                  __html: RichText.asHtml(section.body),
+                }}
+              />
+            </section>
           ))}
         </article>
       </main>
@@ -137,13 +142,7 @@ export const getStaticProps: GetStaticProps = async context => {
       content: response.data.content.map(content => {
         return {
           heading: content.heading,
-          body: content.body.map(body => {
-            return {
-              text: body.text,
-              type: body.type,
-              spans: body.spans,
-            };
-          }),
+          body: [...content.body],
         };
       }),
     },
