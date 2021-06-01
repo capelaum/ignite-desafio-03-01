@@ -10,6 +10,7 @@ import ptBR from 'date-fns/locale/pt-BR';
 import { format } from 'date-fns';
 
 import { getPrismicClient } from '../../services/prismic';
+import Comments from '../../components/Comments';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
@@ -120,7 +121,6 @@ export default function Post({ post, nextPage, prevPage, preview }: PostProps) {
             </section>
           ))}
         </article>
-
       </main>
 
       <footer className={commonStyles.container}>
@@ -128,7 +128,7 @@ export default function Post({ post, nextPage, prevPage, preview }: PostProps) {
           {prevPage && (
             <div className={styles.paginatorContent}>
               <h2>{prevPage.data.title}</h2>
-              <Link href={prevPage.uid}>
+              <Link href={`/post/${prevPage.uid}`}>
                 <a>Post Anterior</a>
               </Link>
             </div>
@@ -137,12 +137,14 @@ export default function Post({ post, nextPage, prevPage, preview }: PostProps) {
           {nextPage && (
             <div className={styles.paginatorContent}>
               <h2>{nextPage.data.title}</h2>
-              <Link href={nextPage.uid}>
+              <Link href={`/post/${nextPage.uid}`}>
                 <a>Próximo Post</a>
               </Link>
             </div>
           )}
         </div>
+
+        <Comments />
 
         {preview && (
           <aside className={commonStyles.previewPrismic}>
@@ -234,9 +236,6 @@ export const getStaticProps: GetStaticProps = async ({
       orderings: '[document.first_publication_date]',
     }
   );
-
-  console.log('nextPage:', nextPage);
-  console.log('prevPage:', prevPage);
 
   return {
     props: {

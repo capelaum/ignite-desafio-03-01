@@ -1,11 +1,45 @@
 // TODO
 .headerContainer {
-  height: 10rem;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  height: 8rem;
+  max-width: 100%;
+  margin: 0;
+  // border-bottom: 0.5px solid linear-gradient(to right, red, purple);
 
   display: flex;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+
+  a{
+    display: block;
+    width: 1120px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
 }
 
+.headerContainer:before, .headerContainer:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.headerContainer:before {
+  top: 0;
+  width: 0px;
+  background-image: -webkit-gradient(linear, 0 100%, 0 0, from(#FF57B2), to(purple));
+  background-image: -webkit-linear-gradient(purple, #FF57B2);
+  background-image: -moz-linear-gradient(purple, #FF57B2);
+  background-image: -o-linear-gradient(purple, #FF57B2);
+}
+
+.headerContainer:after {
+  right: -1px;
+  height: 1px;
+  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#FF57B2), to(purple));
+  background-image: -webkit-linear-gradient(left, #FF57B2, purple);
+  background-image: -moz-linear-gradient(left, #FF57B2, purple);
+  background-image: -o-linear-gradient(left, #FF57B2, purple);
+}
