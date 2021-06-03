@@ -14,6 +14,8 @@ import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
+import { SocialFooter } from '../components/SocialFooter/SocialFooter';
+import { PreviewLink } from '../components/PreviewLink/PreviewLink';
 
 interface Post {
   uid?: string;
@@ -102,15 +104,13 @@ export default function Home({
             <button onClick={handlePagination}>Carregar mais posts</button>
           )}
         </div>
-
-        {preview && (
-          <aside className={commonStyles.previewPrismic}>
-            <Link href="/api/exit-preview">
-              <a>Sair do modo Preview</a>
-            </Link>
-          </aside>
-        )}
       </main>
+
+      <footer className={commonStyles.container}>
+        {preview && <PreviewLink />}
+
+        <SocialFooter />
+      </footer>
     </>
   );
 }

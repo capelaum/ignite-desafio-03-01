@@ -15,6 +15,9 @@ import Comments from '../../components/Comments';
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import Link from 'next/link';
+import { PaginatorContent } from '../../components/PaginatorContent/PaginatorContent';
+import { SocialFooter } from '../../components/SocialFooter/SocialFooter';
+import { PreviewLink } from '../../components/PreviewLink/PreviewLink';
 
 interface Post {
   uid: string;
@@ -126,33 +129,27 @@ export default function Post({ post, nextPage, prevPage, preview }: PostProps) {
       <footer className={commonStyles.container}>
         <div className={styles.paginator}>
           {prevPage && (
-            <div className={styles.paginatorContent}>
-              <h2>{prevPage.data.title}</h2>
-              <Link href={`/post/${prevPage.uid}`}>
-                <a>Post Anterior</a>
-              </Link>
-            </div>
+            <PaginatorContent
+              title={prevPage.data.title}
+              uid={prevPage.uid}
+              text="Post anterior"
+            />
           )}
 
           {nextPage && (
-            <div className={styles.paginatorContent}>
-              <h2>{nextPage.data.title}</h2>
-              <Link href={`/post/${nextPage.uid}`}>
-                <a>Próximo Post</a>
-              </Link>
-            </div>
+            <PaginatorContent
+              title={nextPage.data.title}
+              uid={nextPage.uid}
+              text="Próximo post"
+            />
           )}
         </div>
 
         <Comments />
 
-        {preview && (
-          <aside className={commonStyles.previewPrismic}>
-            <Link href="/api/exit-preview">
-              <a>Sair do modo Preview</a>
-            </Link>
-          </aside>
-        )}
+        {preview && <PreviewLink />}
+
+        <SocialFooter />
       </footer>
     </>
   );
