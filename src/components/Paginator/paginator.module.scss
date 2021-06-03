@@ -1,0 +1,63 @@
+.paginator {
+  margin-top: 3.75rem;
+  padding: 3rem 0 5rem 0;
+  border-top: 0.1px solid rgba(215, 215, 215, 0.1);
+
+  display: flex;
+  justify-content: space-between;
+
+  .paginatorContent {
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      padding-bottom: 0.5rem;
+    }
+
+    a {
+      color: var(--pink);
+      transition: all 0.2s;
+      font-weight: 600;
+      font-size: 1.1875rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &:nth-child(1) {
+      text-align: left;
+    }
+
+    &:nth-child(2) {
+      text-align: right;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .paginator {
+    .paginatorContent {
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      a {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .paginator {
+    .paginatorContent {
+      h2 {
+        font-size: 1rem;
+      }
+
+      a {
+        font-size: 1rem;
+      }
+    }
+  }
+}

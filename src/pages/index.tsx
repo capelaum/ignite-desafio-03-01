@@ -14,8 +14,8 @@ import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
-import { SocialFooter } from '../components/SocialFooter/SocialFooter';
-import { PreviewLink } from '../components/PreviewLink/PreviewLink';
+import { SocialFooter } from '../components/SocialFooter';
+import { PreviewLink } from '../components/PreviewLink';
 
 interface Post {
   uid?: string;
@@ -108,7 +108,6 @@ export default function Home({
 
       <footer className={commonStyles.container}>
         {preview && <PreviewLink />}
-
         <SocialFooter />
       </footer>
     </>

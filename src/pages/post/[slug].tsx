@@ -15,9 +15,9 @@ import Comments from '../../components/Comments';
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import Link from 'next/link';
-import { PaginatorContent } from '../../components/PaginatorContent/PaginatorContent';
-import { SocialFooter } from '../../components/SocialFooter/SocialFooter';
-import { PreviewLink } from '../../components/PreviewLink/PreviewLink';
+import { SocialFooter } from '../../components/SocialFooter';
+import { PreviewLink } from '../../components/PreviewLink';
+import { Paginator } from '../../components/Paginator';
 
 interface Post {
   uid: string;
@@ -127,28 +127,9 @@ export default function Post({ post, nextPage, prevPage, preview }: PostProps) {
       </main>
 
       <footer className={commonStyles.container}>
-        <div className={styles.paginator}>
-          {prevPage && (
-            <PaginatorContent
-              title={prevPage.data.title}
-              uid={prevPage.uid}
-              text="Post anterior"
-            />
-          )}
-
-          {nextPage && (
-            <PaginatorContent
-              title={nextPage.data.title}
-              uid={nextPage.uid}
-              text="Próximo post"
-            />
-          )}
-        </div>
-
+        <Paginator nextPage={nextPage} prevPage={prevPage} />
         <Comments />
-
         {preview && <PreviewLink />}
-
         <SocialFooter />
       </footer>
     </>
