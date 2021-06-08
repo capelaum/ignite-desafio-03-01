@@ -7,6 +7,7 @@
 .posts {
   max-width: 1120px;
   margin: 5.5rem 0;
+  min-height: calc(100vh - 21.25rem);
 
   a {
     display: block;
@@ -21,7 +22,7 @@
       font-size: 1.5rem;
     }
 
-    &:hover strong{
+    &:hover strong {
       color: var(--pink);
     }
 
