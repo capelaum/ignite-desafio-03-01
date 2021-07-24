@@ -31,7 +31,7 @@ const addUtterancesScript = (
 };
 
 const Comments = () => {
-  const repo = 'capelaum/ignite-desafio-03-01';
+  const repo = 'capelaum/space-travelling';
   const theme = 'dark-blue';
   const issueTerm = 'pathname';
   const label = 'Comments';
