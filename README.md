@@ -1,6 +1,7 @@
-## Space Travelling Blog
+## Space Travelling - Next.js Blog
 
-Implementação de um Blog utilizando Prismic CMS e Next.js
+Vercel Demo Link: [Space Travelling](https://space-travelling.vercel.app)
+
 <div align="center">
   <img src=".github/Capa.png">
 </div>
@@ -32,12 +33,14 @@ $ yarn -t "testName"
 
 ```
 
-### Tecnologias
+### Tech
 
 - [Next.js](https://nextjs.org/)
 - [Prismic](https://prismic.io)
 - [date-fns](https://date-fns.org)
 - [react-icons](https://react-icons.github.io/react-icons)
+- [utterances](https://utteranc.es/)
+
 
 ### Créditos
 
